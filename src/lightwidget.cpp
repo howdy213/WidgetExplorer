@@ -2,8 +2,8 @@
  * @file lightwidget.cpp
  * @brief LightWidget主类实现文件
  * @author howdy213
- * @date 2026-1-30
- * @version 1.1.0
+ * @date 2026-1-31
+ * @version 1.2.0
  *
  * Copyright 2025-2026 howdy213
  *

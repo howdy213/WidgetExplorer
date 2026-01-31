@@ -21,6 +21,12 @@
  */
 #include "webasedata.h"
 
+class WEBaseDataPrivate {
+public:
+    QMap<QString, QVariant> data;
+    QMap<QString, QString> map;//QString到QString的映射，处理别名
+};
+
 ///
 /// \brief WEBaseData::WEBaseData
 ///
@@ -31,6 +37,14 @@ WEBaseData::WEBaseData() { d = new WEBaseDataPrivate; }
 WEBaseData::~WEBaseData() {
     delete d;
     d = nullptr;
+}
+
+QVariant WEBaseData::getData(QString name)
+{
+    name = d->map.contains(name) ? d->map[name] : name;
+    if(d->data.contains(name))
+        return d->data[name];
+    return QVariant();
 }
 ///
 /// \brief WEBaseData::addData

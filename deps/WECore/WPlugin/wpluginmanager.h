@@ -2,8 +2,8 @@
  * @file wpluginmanager.h
  * @brief 插件管理器头文件
  * @author howdy213
- * @date 2026-1-30
- * @version 1.1.0
+ * @date 2026-1-31
+ * @version 1.2.0
  *
  * Copyright 2025-2026 howdy213
  *
@@ -30,15 +30,16 @@
 
 using InitDataProc = std::function<void(WMetaData &)>;
 class WPluginManagerPrivate;
-class WE_NAMESPACE::WPluginManager : public QObject {
+W_INLINE namespace WE_NAMESPACE {
+    class WE_EXPORT WPluginManager : public QObject {
     Q_OBJECT
-public:
+    public:
     WPluginManager();
     virtual ~WPluginManager();
 
     bool addPlugin(WPlugin *plugin);
     bool loadPlugin(WPlugin *plugin);
-    bool initPlugin(WPlugin *plugin, InitDataProc proc=[](WMetaData&){});
+    bool initPlugin(WPlugin *plugin, InitDataProc proc = [](WMetaData &) {});
     bool unloadPlugin(WPlugin *plugin);
     void unloadAllPlugins();
 
@@ -57,7 +58,8 @@ private:
     WPluginManagerPrivate *d = nullptr;
 public slots:
     bool sendMsg(WMetaData &);
-};
+    };
+}
 Q_DECLARE_METATYPE(WE_NAMESPACE::WPluginManager)
 Q_DECLARE_METATYPE(WE_NAMESPACE::WPluginManager *)
 #endif

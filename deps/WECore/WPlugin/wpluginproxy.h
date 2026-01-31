@@ -2,8 +2,8 @@
  * @file wpluginproxy.h
  * @brief 插件代理类头文件
  * @author howdy213
- * @date 2026-1-30
- * @version 1.1.0
+ * @date 2026-1-31
+ * @version 1.2.0
  *
  * Copyright 2025-2026 howdy213
  *
@@ -22,9 +22,12 @@
 #ifndef WPLUGINPROXY_H
 #define WPLUGINPROXY_H
 
-class WPluginProxy {
+#include "WDef/wedef.h"
+
+W_INLINE namespace WE_NAMESPACE{
+    class WE_EXPORT WPluginProxy {
 public:
     WPluginProxy();
 };
-
+}
 #endif // WPLUGINPROXY_H

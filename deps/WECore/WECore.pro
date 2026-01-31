@@ -3,7 +3,7 @@ QT -= gui
 TARGET = wecore
 TEMPLATE = lib
 
-DEFINES += WIDGETEXPLORERSDK_LIBRARY
+DEFINES += WE_LIBRARY
 
 LIBS += -luser32 -lshell32
 
@@ -15,14 +15,36 @@ win32 {
     }
 }
 
-include(WECoreInt.pri)
-HEADERS += \
-    WDef/colordef.h \
-    WDef/wedef.h \
-    WE/we.h \
-    wconfig.h \
-    wdef.h \
-    wfile.h \
-    wplugin.h
-SOURCES += \
-    WE/we.cpp \
+include(WECore.pri)
+HEADERS +=                      \
+    wconfig.h                   \
+    wdef.h                      \
+    wfile.h                     \
+    wplugin.h                   \
+    WE/we.h                     \
+    WE/webase.h                 \
+    WE/webasedata.h             \
+    WE/weclass.h                \
+    WDef/colordef.h             \
+    WDef/wedef.h                \
+    WConfig/wconfigdocument.h   \
+    WPlugin/wplugin.h           \
+    WPlugin/wplugininterface.h  \
+    WPlugin/wpluginmanager.h    \
+    WPlugin/wpluginmetadata.h   \
+    WPlugin/wpluginproxy.h      \
+    WPlugin/wvirtualplugin.h    \
+    WPlugin/wwidget.h           \
+    WPlugin/wwidgetmanager.h
+SOURCES +=                      \
+    WE/weclass.cpp              \
+    WE/webase.cpp               \
+    WE/webasedata.cpp           \
+    WConfig/wconfigdocument.cpp \
+    WE/we.cpp                   \
+    WPlugin/wplugin.cpp         \
+    WPlugin/wpluginmanager.cpp  \
+    WPlugin/wvirtualplugin.cpp  \
+    WPlugin/wwidget.cpp         \
+    WPlugin/wwidgetmanager.cpp  \
+    WPlugin/wpluginproxy.cpp

@@ -2,8 +2,8 @@
  * @file wvirtualplugin.h
  * @brief 虚拟插件类头文件
  * @author howdy213
- * @date 2026-1-30
- * @version 1.1.0
+ * @date 2026-1-31
+ * @version 1.2.0
  *
  * Copyright 2025-2026 howdy213
  *
@@ -24,25 +24,28 @@
 #include "../WDef/wedef.h"
 #include "wplugininterface.h"
 
-class WE_NAMESPACE::WVirtualPlugin : public WPluginInterface {
-public:
+W_INLINE namespace WE_NAMESPACE {
+    class WE_EXPORT WVirtualPlugin : public WPluginInterface {
+    public:
     bool connectManager(WPluginManager *receiver,
                         bool isConnect = true) const override;
-public:
+
+    public:
     WVirtualPlugin();
     virtual ~WVirtualPlugin();
-    bool init(WMetaData& msg) override;
+    bool init(WMetaData &msg) override;
     void recMsg(WMetaData &msg) override;
-    bool deinit(WMetaData& msg) override;
+    bool deinit(WMetaData &msg) override;
+
 public:
     void setFile(QString filePath) { this->m_filePath = filePath; };
-    QString getFilePath(){return m_filePath;}
+    QString getFilePath() { return m_filePath; }
     void setPlugin(WPlugin *plugin);
 
 private:
     QString m_filePath = "";
     WPlugin *m_plugin = nullptr;
     bool m_admin = false;
-};
-
+    };
+}
 #endif // WVIRTUALPLUGIN_H

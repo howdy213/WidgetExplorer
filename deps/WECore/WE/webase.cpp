@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 #include "webase.h"
-
+using namespace WE_NAMESPACE;
 class WEBasePrivate {
 public:
     WEBasePrivate(WEBase *base)

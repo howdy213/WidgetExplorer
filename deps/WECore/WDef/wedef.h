@@ -35,15 +35,20 @@
 #define WE_VERSION_STRING MS(_WE_VERSION_STRING)
 
 #define WE_NAMESPACE we
-#if defined(WIDGETEXPLORERSDK_LIBRARY)
-#define WIDGETEXPLORERSDK_EXPORT Q_DECL_EXPORT
+#if defined(WE_LIBRARY)
+#define WE_EXPORT Q_DECL_EXPORT
+#define WE_EXPORT2 Q_DECL_EXPORT
 #else
-#define WIDGETEXPLORERSDK_EXPORT Q_DECL_IMPORT
+#define WE_EXPORT Q_DECL_IMPORT
+#define WE_EXPORT2
 #endif
-
+//TODO：修正对含Q_OBJECT导出类的处理，使用WE_EXPORT2，会导致类多次拷贝影响兼容性
+//已修正：不在WECore.pri中包含以避免生成moc
+#define W_INLINE inline
 #define WApp (WE::inst())
 
-inline namespace WE_NAMESPACE {
+#include <QtGlobal>
+W_INLINE namespace WE_NAMESPACE {
 namespace Consts {
 constexpr auto WESender = "WidgetExplorer";
 namespace PluginInterface {
@@ -92,7 +97,7 @@ constexpr auto Path = "WPath.pathManager";                // WPath*
 } // namespace Consts
 }; // namespace WE_NAMESPACE
 
-inline namespace WE_NAMESPACE {
+W_INLINE namespace WE_NAMESPACE {
 class WE;
 class WEBase;
 class WEBaseData;
@@ -109,6 +114,7 @@ class WWidgetManager;
 class WWidget;
 class WEClass;
 class WVirtualPlugin;
+class WPluginProxy;
 template <class T> class WConfig;
 } // namespace WE_NAMESPACE
 
@@ -119,6 +125,6 @@ template <typename funcType> void *getMemberAddr(funcType func) {
     } u;
     u.pfn = func;
     return u.pv;
-}
+}//测试类成员偏移量
 
 #endif // WEDEF_H

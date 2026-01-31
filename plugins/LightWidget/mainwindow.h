@@ -58,6 +58,7 @@ public:
     void closeEvent(QCloseEvent *event);
     void tray(QSystemTrayIcon::ActivationReason reason);
     bool sendMsgs(QString widgetName, QMap<QString, QVariant> map);
+    void recMsgs(WMetaData& msg);
 public slots:
     void showPanel();
 private slots:

@@ -54,13 +54,22 @@ MainWindow::MainWindow(QStringList param, WEBase *ptr, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
     this->d = new MainWindowPrivate;
     d->ptr = ptr;
-    auto initAutorun = [this, param, ptr]() -> auto {
+    auto initAutorun = [this, &param, ptr]() -> auto {
         if (param.length() >= 1)
             if (param[0] == Plugin::Autorun)
                 ptr->getWEClass()->configManager()->set(Plugin::Autorun, true);
         if (!qvariant_cast<bool>(
-                ptr->getWEClass()->configManager()->get(Plugin::Autorun)))
-            show();
+                ptr->getWEClass()->configManager()->get(Plugin::Autorun))){
+            if (param.contains("-hide")&&param.length()>=2){
+                param.removeOne("-hide");
+                QString widget=param[0];
+                param.removeAt(0);
+                QMap<QString,QVariant> map;
+                map.insert(Data::Command,(QString)param.join(' '));
+                sendMsgs(param[0],map);
+            }
+            else show();
+        }
     };
 
     ui->setupUi(this);
@@ -266,6 +275,11 @@ bool MainWindow::sendMsgs(QString widgetName, QMap<QString, QVariant> map) {
     data.map = map;
     return d->ptr->getWEClass()->pluginManager()->sendMsg(data);
 }
+///
+/// \brief MainWindow::recMsgs
+/// \param msg
+///
+void MainWindow::recMsgs(WMetaData &msg) { Q_UNUSED(msg); }
 ///
 /// \brief MainWindow::showPanel
 ///

@@ -34,7 +34,7 @@
 #include <QTextStream>
 #include <QVariant>
 
-class WE_NAMESPACE::WConfigDocument : public WConfig<QVariant> {
+class WE_EXPORT WE_NAMESPACE::WConfigDocument : public WConfig<QVariant> {
 public:
     WConfigDocument();
     virtual ~WConfigDocument();

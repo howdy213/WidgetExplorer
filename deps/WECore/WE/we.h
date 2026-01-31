@@ -22,19 +22,19 @@
 #ifndef WE_H
 #define WE_H
 #include "../WDef/wedef.h"
-#include <QtGlobal>
 #include <QObject>
-
-class WIDGETEXPLORERSDK_EXPORT WE_NAMESPACE::WE{
-public:
-    static bool init(WEBase* base);
+W_INLINE namespace WE_NAMESPACE {
+    class WE_EXPORT WE {
+    public:
+    static bool init(WEBase *base);
     static WEBase *inst();
+
 private:
     WE() = default;
     ~WE() = default;
-    WE(const WE&) = delete;
-    WE& operator=(const WE&) = delete;
-    static WEBase* m_instance;
-};
-
+    WE(const WE &) = delete;
+    WE &operator=(const WE &) = delete;
+    static WEBase *m_instance;
+    };
+}
 #endif

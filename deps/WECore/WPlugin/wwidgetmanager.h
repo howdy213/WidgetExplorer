@@ -2,8 +2,8 @@
  * @file wwidgetmanager.h
  * @brief Widget管理器头文件，负责插件Widget的统一管理
  * @author howdy213
- * @date 2026-1-30
- * @version 1.1.0
+ * @date 2026-1-31
+ * @version 1.2.0
  *
  * Copyright 2025-2026 howdy213
  *
@@ -30,9 +30,10 @@
 #include <QUuid>
 
 class WWidgetManagerPrivate;
-class WE_NAMESPACE::WWidgetManager : public QObject {
+W_INLINE namespace WE_NAMESPACE {
+    class WE_EXPORT WWidgetManager : public QObject {
     Q_OBJECT
-public:
+    public:
     WWidgetManager(WEBase *base = nullptr);
     virtual ~WWidgetManager();
     bool addWidget(QUuid id, WWidget *widget);
@@ -45,7 +46,8 @@ public:
 
 private:
     WWidgetManagerPrivate *d = nullptr;
-};
+    };
+}
 Q_DECLARE_METATYPE(WE_NAMESPACE::WWidgetManager)
 Q_DECLARE_METATYPE(WE_NAMESPACE::WWidgetManager *)
 #endif // WWIDGETMANAGER_H

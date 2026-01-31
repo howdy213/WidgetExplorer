@@ -1,9 +1,9 @@
 /**
  * @file main.cpp
- * @brief 程序入口文件，实现了程序的初始化、主窗口创建、系统托盘设置等功能
+ * @brief 程序入口文件，实现了程序的初始化
  * @author howdy213
- * @date 2026-1-30
- * @version 1.1.0
+ * @date 2026-1-31
+ * @version 1.2.0
  *
  * Copyright 2025-2026 howdy213
  *
@@ -28,6 +28,7 @@
 #include <QApplication>
 #include <QLockFile>
 #include <QMenu>
+#include <QMessageBox>
 #include <QStyleFactory>
 #include <QSystemTrayIcon>
 using namespace we::Consts;
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
                           ->get(Config::DefaultMain)
                           .toString();
     if (!lwptr->initMainPlugin(params, defaultMain)) {
-        MessageBoxW(0, L"无可用主界面，将退出", L"提示", 0);
+        QMessageBox::information(0, "无可用主界面，将退出", "提示");
         return -1;
     }
 

@@ -30,7 +30,8 @@
 
 class WEBasePrivate;
 
-class WE_NAMESPACE::WEBase {
+W_INLINE namespace WE_NAMESPACE{
+class WE_EXPORT WEBase {
 public:
     WEBase();
     virtual ~WEBase();
@@ -44,7 +45,7 @@ public:
 private:
     WEBasePrivate *d = 0;
 };
-
+}
 Q_DECLARE_METATYPE(WE_NAMESPACE::WEBase);
 Q_DECLARE_METATYPE(WE_NAMESPACE::WEBase *);
 

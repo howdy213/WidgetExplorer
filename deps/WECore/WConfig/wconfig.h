@@ -32,7 +32,7 @@ public:
     T defaultValue;
 };
 
-template <class T> class WE_NAMESPACE::WConfig {
+template <class T> class WE_EXPORT WE_NAMESPACE::WConfig {
 public:
     WConfig();
     virtual ~WConfig();

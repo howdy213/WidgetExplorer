@@ -2,8 +2,8 @@
  * @file wplugin.h
  * @brief 插件基类头文件
  * @author howdy213
- * @date 2026-1-30
- * @version 1.1.0
+ * @date 2026-1-31
+ * @version 1.2.0
  *
  * Copyright 2025-2026 howdy213
  *
@@ -27,7 +27,9 @@
 #include <QPluginLoader>
 
 class WPluginPrivate;
-class WE_NAMESPACE::WPlugin{
+
+W_INLINE namespace WE_NAMESPACE{
+class WE_EXPORT WPlugin{
 public:
     WPlugin(WPluginManager *parent);
     virtual ~WPlugin();
@@ -47,6 +49,7 @@ private:
     bool loadFile(QString filePath);
     WPluginPrivate *d = nullptr;
 };
+}
 Q_DECLARE_METATYPE(WE_NAMESPACE::WPlugin);
 Q_DECLARE_METATYPE(WE_NAMESPACE::WPlugin *);
 

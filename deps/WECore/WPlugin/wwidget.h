@@ -2,8 +2,8 @@
  * @file wwidget.h
  * @brief WWidget类头文件，定义插件Widget的基类
  * @author howdy213
- * @date 2026-1-30
- * @version 1.1.0
+ * @date 2026-1-31
+ * @version 1.2.0
  *
  * Copyright 2025-2026 howdy213
  *
@@ -27,14 +27,15 @@
 #include <QObject>
 
 class WWidgetPrivate;
-class WE_NAMESPACE::WWidget : public QObject {
+W_INLINE namespace WE_NAMESPACE {
+    class WE_EXPORT WWidget : public QObject {
     Q_OBJECT
-signals:
+    signals:
     void sendMessage(WMetaData &);
-private slots:
+    private slots:
     virtual void receiveMessage(WMetaData &msg) = 0;
 
-public:
+    public:
     WWidget(WEBase *parent = nullptr);
     virtual ~WWidget();
     bool setParent(WEBase *parent);
@@ -48,6 +49,6 @@ public:
 
 private:
     WWidgetPrivate *d = nullptr;
-};
-
+    };
+}
 #endif // WWIDGET_H

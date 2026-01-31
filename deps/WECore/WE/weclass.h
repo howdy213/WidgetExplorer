@@ -25,7 +25,8 @@
 
 class WEClassPrivate;
 
-class WE_NAMESPACE::WEClass {
+W_INLINE namespace WE_NAMESPACE{
+class WE_EXPORT WEClass{
 public:
     WEClass(WEBase *base = nullptr);
     virtual ~WEClass();
@@ -37,5 +38,5 @@ public:
 private:
     WEClassPrivate *d = nullptr;
 };
-
+}
 #endif // WECLASS_H

@@ -28,17 +28,15 @@
 #include <QString>
 #include <QVariant>
 
-class WEBaseDataPrivate {
-public:
-    QMap<QString, QVariant> data;
-    QMap<QString, QString> map;
-};
+class WEBaseDataPrivate;
 
-class WE_NAMESPACE::WEBaseData {
+W_INLINE namespace WE_NAMESPACE{
+class WE_EXPORT WEBaseData {
 public:
     WEBaseData();
     virtual ~WEBaseData();
     template <typename T> T getData(QString name);
+    QVariant getData(QString name);
     void addData(QString key, QVariant value);
     void addMapping(QString preimage, QString image);
 
@@ -52,8 +50,7 @@ private:
 /// \return
 ///
 template <typename T> T WEBaseData::getData(QString name) {
-    name = d->map.contains(name) ? d->map[name] : name;
-    return qvariant_cast<T>(this->d->data[name]);
+    return qvariant_cast<T>(getData(name));
 }
-
+}
 #endif // WEBASEDATA_H
