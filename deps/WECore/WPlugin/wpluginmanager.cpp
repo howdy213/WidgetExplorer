@@ -2,7 +2,7 @@
  * @file wpluginmanager.cpp
  * @brief 插件管理器实现文件
  * @author howdy213
- * @date 2026-1-30
+ * @date 2026-2-1
  * @version 1.1.0
  *
  * Copyright 2025-2026 howdy213

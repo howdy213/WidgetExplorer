@@ -23,13 +23,13 @@
 #include "aboutwindow.h"
 #include "ui_mainwindow.h"
 
-#include "WECore/WConfig/wconfigdocument.h"
 #include "WECore/WDef/wedef.h"
 #include "WECore/WE/we.h"
 #include "WECore/WE/webase.h"
 #include "WECore/WFile/wpath.h"
 #include "WECore/WFile/wshellexecute.h"
 #include "WECore/WPlugin/wwidgetmanager.h"
+#include "WPlugin/wplugindata.h"
 
 #include <QButtonGroup>
 #include <QFile>
@@ -39,8 +39,7 @@ using namespace we::Consts;
 
 class MainWindowPrivate {
 public:
-    WEBase *ptr = nullptr;
-    QLockFile *lock = nullptr;
+    Ui::MainWindow *ui = nullptr;
     AboutWindow *aboutWnd = nullptr;
 };
 
@@ -50,47 +49,24 @@ public:
 /// \param ptr
 /// \param parent
 ///
-MainWindow::MainWindow(QStringList param, WEBase *ptr, QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
-    this->d = new MainWindowPrivate;
-    d->ptr = ptr;
-    auto initAutorun = [this, &param, ptr]() -> auto {
-        if (param.length() >= 1)
-            if (param[0] == Plugin::Autorun)
-                ptr->getWEClass()->configManager()->set(Plugin::Autorun, true);
-        if (!qvariant_cast<bool>(
-                ptr->getWEClass()->configManager()->get(Plugin::Autorun))){
-            if (param.contains("-hide")&&param.length()>=2){
-                param.removeOne("-hide");
-                QString widget=param[0];
-                param.removeAt(0);
-                QMap<QString,QVariant> map;
-                map.insert(Data::Command,(QString)param.join(' '));
-                sendMsgs(param[0],map);
-            }
-            else show();
-        }
-    };
-
-    ui->setupUi(this);
+///
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    d = new MainWindowPrivate;
+    d->ui = new Ui::MainWindow;
+    d->ui->setupUi(this);
     initWindow();
-    initAutorun();
     initPlugin();
     initList();
     initTable();
     initMenu();
-    d->ptr->getWEClass()->widgetManager()->initWidget();
+    PClass->widgetManager()->initWidget();
 }
 ///
 /// \brief MainWindow::~MainWindow
 ///
 MainWindow::~MainWindow() {
-    delete ui;
-    ui = nullptr;
-    delete d->ptr;
-    d->ptr = nullptr;
-    delete d->lock;
-    d->lock = nullptr;
+    delete d->ui;
+    d->ui = nullptr;
     delete d->aboutWnd;
     d->aboutWnd = nullptr;
 }
@@ -110,7 +86,7 @@ void MainWindow::initWindow() {
 /// \brief MainWindow::initPlugin
 ///
 void MainWindow::initPlugin() {
-    auto man = d->ptr->getWEClass()->pluginManager();
+    auto man = PClass->pluginManager();
     auto insts = man->allPluginsInst();
     foreach (auto inst, insts) {
         if (!man->loadPlugin(inst))
@@ -121,13 +97,13 @@ void MainWindow::initPlugin() {
 ///
 /// \brief MainWindow::initList
 ///
-void MainWindow::initList() { ui->listLink->addItems(ReadLinkFile()); }
+void MainWindow::initList() { d->ui->listLink->addItems(ReadLinkFile()); }
 ///
 /// \brief MainWindow::initTable
 ///
 void MainWindow::initTable() {
-    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
+    d->ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    d->ui->tableWidget->setSelectionMode(QAbstractItemView::NoSelection);
 
     QFont font;
     font.setPointSize(10);
@@ -137,7 +113,7 @@ void MainWindow::initTable() {
 
     int colCount = 4;
 
-    ui->tableWidget->setColumnCount(colCount);
+    d->ui->tableWidget->setColumnCount(colCount);
 
     createCol(0, "插件名", font, color);
     createCol(1, "版本", font, color);
@@ -145,7 +121,7 @@ void MainWindow::initTable() {
     createCol(3, "路径", font, color);
 
     auto list = WE::inst()->getWEClass()->pluginManager()->allPluginsInst();
-    ui->tableWidget->setRowCount(list.length());
+    d->ui->tableWidget->setRowCount(list.length());
     auto it = list.begin();
     for (int i = 0; i <= list.length() - 1; i++) {
         createRow(i, *it);
@@ -195,8 +171,8 @@ void MainWindow::createCol(int col, QString title, QFont font, QColor color) {
     item->setFont(font);
     item->setForeground(QBrush(color));
     item->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    ui->tableWidget->setHorizontalHeaderItem(col, item);
-    ui->tableWidget->horizontalHeader()->setSectionResizeMode(
+    d->ui->tableWidget->setHorizontalHeaderItem(col, item);
+    d->ui->tableWidget->horizontalHeader()->setSectionResizeMode(
         col, QHeaderView::ResizeToContents);
 }
 ///
@@ -205,7 +181,7 @@ void MainWindow::createCol(int col, QString title, QFont font, QColor color) {
 /// \param info
 ///
 void MainWindow::createRow(int row, WPlugin *info) {
-    if (row >= ui->tableWidget->rowCount())
+    if (row >= d->ui->tableWidget->rowCount())
         return;
     QTableWidgetItem *item = nullptr;
     QString str;
@@ -215,7 +191,7 @@ void MainWindow::createRow(int row, WPlugin *info) {
         str = qvariant_cast<QString>(info->getMetaData(list[i]));
         item = new QTableWidgetItem(str);
         item->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        ui->tableWidget->setItem(row, i, item);
+        d->ui->tableWidget->setItem(row, i, item);
     }
 }
 ///
@@ -233,11 +209,6 @@ QStringList MainWindow::ReadLinkFile() {
     }
     return list;
 }
-///
-/// \brief MainWindow::setLockFile
-/// \param file
-///
-void MainWindow::setLockFile(QLockFile *file) { d->lock = file; }
 ///
 /// \brief MainWindow::closeEvent
 /// \param event
@@ -273,7 +244,7 @@ bool MainWindow::sendMsgs(QString widgetName, QMap<QString, QVariant> map) {
     data.from = WESender;
     data.dest = widgetName;
     data.map = map;
-    return d->ptr->getWEClass()->pluginManager()->sendMsg(data);
+    return PClass->pluginManager()->sendMsg(data);
 }
 ///
 /// \brief MainWindow::recMsgs
@@ -300,13 +271,16 @@ void MainWindow::about() {
 ///
 /// \brief MainWindow::restart
 ///
-void MainWindow::restart() {}
+void MainWindow::restart() {
+    WShellExecute::asyncExecute(WPath().getModuleFolder()+"tools/WELauncher.exe","open","-t 500");
+    QApplication::exit(0);
+}
 ///
 /// \brief MainWindow::on_listLink_itemClicked
 /// \param item
 ///
 void MainWindow::on_listLink_itemClicked(QListWidgetItem *item) {
-    ui->editCmd->setText(item->text());
+    d->ui->editCmd->setText(item->text());
 }
 ///
 /// \brief MainWindow::on_tableWidget_cellDoubleClicked
@@ -314,15 +288,15 @@ void MainWindow::on_listLink_itemClicked(QListWidgetItem *item) {
 /// \param column
 ///
 void MainWindow::on_tableWidget_cellDoubleClicked(int row, int column) {
-    auto item = ui->tableWidget->item(row, column);
-    ui->editCmd->setText(item->text());
+    auto item = d->ui->tableWidget->item(row, column);
+    d->ui->editCmd->setText(item->text());
 }
 ///
 /// \brief MainWindow::on_btnCmd_clicked
 ///
 void MainWindow::on_btnCmd_clicked() {
     QMap<QString, QVariant> map;
-    QString str = ui->editCmd->text();
+    QString str = d->ui->editCmd->text();
     int i = 0;
     for (; i <= str.size() - 1; i++) {
         if (str[i] == ' ')
@@ -334,4 +308,4 @@ void MainWindow::on_btnCmd_clicked() {
 ///
 /// \brief MainWindow::on_btnClear_clicked
 ///
-void MainWindow::on_btnClear_clicked() { ui->editCmd->clear(); }
+void MainWindow::on_btnClear_clicked() { d->ui->editCmd->clear(); }

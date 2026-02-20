@@ -20,7 +20,9 @@
  * limitations under the License.
  */
 #include "lightmain.h"
+#include "mainwindow.h"
 
+#include "WConfig/wconfigdocument.h"
 #include "WECore/WPlugin/wplugin.h"
 #include "WECore/WPlugin/wplugindata.h"
 
@@ -68,10 +70,23 @@ bool LightMain::init(WMetaData &msg) {
     PluginData::setPlugin(plugin);
     auto params = qvariant_cast<QStringList>(msg.map[Data::Params]);
     plugin->setMetaData(Plugin::Name, "LightMain");
-    d->w = new MainWindow(params, we);
-    d->w->show();
+
+    auto config = PClass->configManager();
+    if (params.length() >= 1)
+        if (params[0] == Plugin::Autorun)
+            config->set(Plugin::Autorun, true);
+
+    d->w = new MainWindow;
+
+    if (!qvariant_cast<bool>(config->get(Plugin::Autorun))) {
+        if (!PluginData::getPlugin()
+                 ->getMetaData(Plugin::Init)
+                 .toString()
+                 .split(' ')
+                 .contains("-hide"))
+            d->w->show();
+    }
     d->w->setWindowTitle("LightWidget");
-    // w.setLockFile(lockfile);
     createTray();
     return true;
 }

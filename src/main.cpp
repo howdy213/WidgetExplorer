@@ -2,7 +2,7 @@
  * @file main.cpp
  * @brief 程序入口文件，实现了程序的初始化
  * @author howdy213
- * @date 2026-1-31
+ * @date 2026-2-1
  * @version 1.2.0
  *
  * Copyright 2025-2026 howdy213
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
                           ->get(Config::DefaultMain)
                           .toString();
     if (!lwptr->initMainPlugin(params, defaultMain)) {
-        QMessageBox::information(0, "无可用主界面，将退出", "提示");
+        QMessageBox::information(0, "提示", "无可用主界面，将退出");
         return -1;
     }
 

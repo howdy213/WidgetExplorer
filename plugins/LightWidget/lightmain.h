@@ -22,8 +22,6 @@
 #ifndef EXAMPLEPLUGIN_H
 #define EXAMPLEPLUGIN_H
 #include "WECore/WPlugin/wplugininterface.h"
-#include "WECore/WPlugin/wpluginmanager.h"
-#include "mainwindow.h"
 
 #include <QObject>
 #include <QtPlugin>

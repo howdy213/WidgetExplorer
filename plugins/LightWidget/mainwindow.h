@@ -38,7 +38,7 @@ class MainWindowPrivate;
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(QStringList param, WEBase *ptr, QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
@@ -54,11 +54,10 @@ private:
     QStringList ReadLinkFile();
 
 public:
-    void setLockFile(QLockFile *file);
     void closeEvent(QCloseEvent *event);
     void tray(QSystemTrayIcon::ActivationReason reason);
     bool sendMsgs(QString widgetName, QMap<QString, QVariant> map);
-    void recMsgs(WMetaData& msg);
+    void recMsgs(WMetaData &msg);
 public slots:
     void showPanel();
 private slots:
@@ -71,7 +70,6 @@ private slots:
     void on_btnClear_clicked();
 
 private:
-    Ui::MainWindow *ui = nullptr;
     MainWindowPrivate *d = nullptr;
 };
 #endif // MAINWINDOW_H

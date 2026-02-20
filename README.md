@@ -35,5 +35,5 @@ Qt6
 
 ## 许可证
 
-[APACHE LICENSE, VERSION 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+本项目使用[APACHE LICENSE, VERSION 2.0](https://www.apache.org/licenses/LICENSE-2.0)许可证，详见LICENSE文件
 
