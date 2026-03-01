@@ -21,7 +21,6 @@
  */
 #ifndef QUERYMAINDIALOG_H
 #define QUERYMAINDIALOG_H
-
 #include <QButtonGroup>
 #include <QDialog>
 #include <QHBoxLayout>

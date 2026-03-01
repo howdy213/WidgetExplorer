@@ -19,18 +19,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "lightwidget.h"
-
-#include "WECore/WConfig/wconfigdocument.h"
-#include "WECore/WE/we.h"
-#include "WECore/WFile/wpath.h"
-
 #include <QApplication>
 #include <QLockFile>
 #include <QMenu>
 #include <QMessageBox>
 #include <QStyleFactory>
 #include <QSystemTrayIcon>
+
+#include "WECore/WConfig/wconfigdocument.h"
+#include "WECore/WE/we.h"
+#include "WECore/WFile/wpath.h"
+
+#include "lightwidget.h"
 using namespace we::Consts;
 
 int main(int argc, char *argv[]) {

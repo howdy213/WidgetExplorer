@@ -1,0 +1,9 @@
+[submodule "deps/WECore"]
+	path = deps/WECore
+	url = https://github.com/howdy213/WECore
+[submodule "plugins/ExamplePlugin"]
+	path = plugins/ExamplePlugin
+	url = https://github.com/howdy213/ExamplePlugin
+[submodule "plugins/LightWidget"]
+	path = plugins/LightWidget
+	url = https://github.com/howdy213/LightWidget

@@ -19,9 +19,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "lightwidget.h"
-#include "lightsystem.h"
-#include "querymaindialog.h"
+#include <QMessageBox>
 
 #include "WECore/WConfig/wconfigdocument.h"
 #include "WECore/WE/we.h"
@@ -29,7 +27,9 @@
 #include "WECore/WPlugin/wplugin.h"
 #include "WECore/WPlugin/wwidgetmanager.h"
 
-#include <QMessageBox>
+#include "lightwidget.h"
+#include "lightsystem.h"
+#include "querymaindialog.h"
 using namespace we::Consts;
 
 class LightWidgetPrivate {
