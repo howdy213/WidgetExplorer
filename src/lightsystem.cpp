@@ -19,9 +19,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <QCoreApplication>
-#include <QDir>
-
+#include "lightsystem.h"
 #include "WECore/WConfig/wconfigdocument.h"
 #include "WECore/WE/we.h"
 #include "WECore/WE/webase.h"
@@ -29,7 +27,8 @@
 #include "WECore/WPlugin/wplugin.h"
 #include "WECore/WPlugin/wpluginmanager.h"
 
-#include "lightsystem.h"
+#include <QCoreApplication>
+#include <QDir>
 using namespace we::Consts;
 
 class LightSystemPrivate {

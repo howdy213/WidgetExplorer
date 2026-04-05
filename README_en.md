@@ -2,29 +2,29 @@ English | [中文](README.md)
 
 # WidgetExplorer
 
-## Introduction
+## Project Introduction
 
-WidgetExplorer is a desktop application based on the Qt plugin framework.
+WidgetExplorer is a desktop application built on the Qt plugin framework.
 
 ## Framework Features
 
-* Plugin property configuration
-* Switch main interface plugins
-* Invoke external programs as plugins
-* ...
+- Plugin property configuration
+- Switch main interface plugin
+- Call external programs as plugins
+- ...
 
-## Project Components
+## Project Composition
 
 1. [src](docs/src.md)  
-   Main program WidgetExplorer, parses configuration files and completes initialization
+   Main program WidgetExplorer, parses configuration files and completes initialization.
 2. [deps/WECore](https://github.com/howdy213/WECore)  
-   Generates wecore.dll, the WidgetExplorer framework
+   Builds `wecore.dll`, the WidgetExplorer framework.
 3. [plugins/LightWidget](https://github.com/howdy213/LightWidget)  
-   Generates LightMain, a lightweight MainWidget
+   Builds `LightMain`, a lightweight MainWidget.
 4. [plugins/ExamplePlugin](https://github.com/howdy213/ExamplePlugin)  
-   Generates ExamplePlugin.dll, an example plugin
+   Builds `ExamplePlugin.dll`, an example plugin.
 
-## Environment Dependencies
+## Dependencies
 
 - Qt 6 (requires `core`, `gui`, `widgets` modules)
 
@@ -32,35 +32,34 @@ WidgetExplorer is a desktop application based on the Qt plugin framework.
 
 1. **Get the source code**  
 
-   ```bash
+```bash
    git clone https://github.com/howdy213/WidgetExplorer.git
    cd WidgetExplorer
-   ```
+```
 
-2. **Prepare WECore dependency**  
-   Ensure the `deps/WECore` directory contains the WECore source code (can be added via submodule or manual download).  
+2. **Prepare the WECore dependency**  
+   Ensure the `deps/WECore` directory contains the WECore source code (available via submodule or manual download).  
 
-   ```bash
-   git submodule init
+```bash
    git submodule update --init --recursive
-   ```
+```
 
 3. **Open `WidgetExplorer.pro` with Qt Creator**  
-   Configure the kit and compile.
+   Configure the build kit and compile.
 
 4. **Configure plugins**  
-   Edit `config/config.json` and the respective plugin configuration files as needed (refer to the examples in the `plugins/` directory of the release), ensuring the plugin paths are correct.
+   Edit `config/config.json` and the plugin-specific configuration files (see the `plugins/` directory in the release for examples) as needed, ensuring plugin paths are correct.
 
 5. **Run**  
-   Run the generated executable after compilation. The program will load all plugins; if there are multiple main interface plugins, a selection dialog will appear.
+   Run the generated executable after compilation. The program will load all plugins; if multiple main interface plugins exist, a selection dialog will appear.
 
-## Changelog
+## Version Updates
 
-###### v1.2.2
+###### v1.2.3
 
-1. Project structure reorganization
+1. Fixed an issue where the application would not exit after closing the window.
 
 ## License
 
 WidgetExplorer is open-sourced under the Apache License 2.0.  
-For more details, please refer to the [LICENSE](LICENSE) file in the project root directory.
+For details, please refer to the [LICENSE](LICENSE) file in the project root directory.

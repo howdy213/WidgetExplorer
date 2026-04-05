@@ -40,7 +40,6 @@ WidgetExplorer 是一个基于 Qt 插件框架的桌面应用程序。
    确保 `deps/WECore` 目录下包含 WECore 源码（可通过子模块或手动下载）。  
    
    ```bash
-   git submodule init
    git submodule update --init --recursive
    ```
    
@@ -55,9 +54,9 @@ WidgetExplorer 是一个基于 Qt 插件框架的桌面应用程序。
 
 ## 版本内容更新
 
-###### v1.2.2
+###### v1.2.3
 
-1. 整理项目框架
+1. 修复窗口关闭后不退出的问题
 
 ## 许可证
 
