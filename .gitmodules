@@ -7,3 +7,6 @@
 [submodule "plugins/LightWidget"]
 	path = plugins/LightWidget
 	url = https://github.com/howdy213/LightWidget
+[submodule "deps/qlementine"]
+	path = deps/qlementine
+	url = https://github.com/oclero/qlementine

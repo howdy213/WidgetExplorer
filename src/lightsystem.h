@@ -1,11 +1,11 @@
 /**
  * @file lightsystem.h
- * @brief 轻量插件加载系统头文件
+ * @brief Header file for the lightweight plugin loading system.
  * @author howdy213
- * @date 2026-1-30
- * @version 1.1.0
+ * @date 2026-05-04
+ * @version 2.0.0
  *
- * Copyright 2025-2026 howdy213
+ * @copyright Copyright 2025-2026 howdy213
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +21,28 @@
  */
 #ifndef LIGHTSYSTEM_H
 #define LIGHTSYSTEM_H
-#include "WECore/WDef/wedef.h"
+#include "WECore/def/wedef.h"
 
 #include <QString>
 
 class LightSystemPrivate;
 
-class WE_NAMESPACE::LightSystem {
+namespace we {
+/**
+ * @class LightSystem
+ * @brief Loads and manages plugins for the lightweight system.
+ */
+class LightSystem {
 public:
     LightSystem();
     virtual ~LightSystem();
     void loadAllPlugin();
     void loadPlugin(QString jsonPath, QString config);
-    void loadSinglePlugin(QString jsonPath, WConfigDocument *doc);
+    void loadSinglePlugin(QString jsonPath, WMetaDocument *doc);
 
 private:
     LightSystemPrivate *d = nullptr;
 };
+} // namespace we
 
 #endif // LIGHTSYSTEM_H

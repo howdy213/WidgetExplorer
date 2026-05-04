@@ -4,5 +4,5 @@ SUBDIRS +=                    \
     deps/WECore               \
     src/WidgetExplorer.pro    \
     plugins/LightWidget       \
-    plugins/ExamplePlugin
+    plugins/ExamplePlugin     \
 
