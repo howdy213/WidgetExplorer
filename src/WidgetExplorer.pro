@@ -1,5 +1,4 @@
 QT += core gui widgets qml
-QT += statemachine
 CONFIG += c++20
 RC_ICONS = icon/we_tp.ico
 
