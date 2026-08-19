@@ -51,6 +51,8 @@ void LightWidget::initAllPlugin() {
     auto manager = WE::inst()->getWEClass()->pluginManager();
     auto plugins = manager->allPluginsInst();
     foreach (auto plugin, plugins) {
+        // First load the plugin, then initialize it
+        manager->loadPlugin(plugin);
         manager->initPlugin(plugin);
     }
 }

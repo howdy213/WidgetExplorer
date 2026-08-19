@@ -24,6 +24,9 @@
 #include "WECore/def/wedef.h"
 
 #include <QString>
+#include <QJsonObject>
+#include <QFile>
+#include <qdir.h>
 
 class LightSystemPrivate;
 
@@ -37,10 +40,12 @@ public:
     LightSystem();
     virtual ~LightSystem();
     void loadAllPlugin();
-    void loadPlugin(QString jsonPath, QString config);
-    void loadSinglePlugin(QString jsonPath, WMetaDocument *doc);
+    void loadPluginRecursive(QDir rootPath, QJsonObject object);
+    void loadPlugin(QDir curPath, QJsonObject object);
+    void loadSinglePlugin(QDir curPath, QJsonObject pluginObj);
 
 private:
+    static QJsonObject readJsonFile(QString filePath);
     LightSystemPrivate *d = nullptr;
 };
 } // namespace we
