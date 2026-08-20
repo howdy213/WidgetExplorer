@@ -2,7 +2,7 @@
  * @file lightsystem.h
  * @brief Header file for the lightweight plugin loading system.
  * @author howdy213
- * @date 2026-05-04
+ * @date 2026-08-20
  * @version 2.0.0
  *
  * @copyright Copyright 2025-2026 howdy213
@@ -21,32 +21,31 @@
  */
 #ifndef LIGHTSYSTEM_H
 #define LIGHTSYSTEM_H
+
 #include "WECore/def/wedef.h"
+#include "PluginConfigManager.h"
 
 #include <QString>
 #include <QJsonObject>
 #include <QFile>
-#include <qdir.h>
-
+#include <QDir>
 class LightSystemPrivate;
 
 namespace we {
-/**
- * @class LightSystem
- * @brief Loads and manages plugins for the lightweight system.
- */
 class LightSystem {
 public:
     LightSystem();
     virtual ~LightSystem();
-    void loadAllPlugin();
-    void loadPluginRecursive(QDir rootPath, QJsonObject object);
-    void loadPlugin(QDir curPath, QJsonObject object);
-    void loadSinglePlugin(QDir curPath, QJsonObject pluginObj);
 
+    void findAllPlugin();
+    void findSinglePlugin(QDir curPath, QJsonObject pluginObj);
+    void findPluginRecursive(QDir rootPath, QJsonObject object);
+    void findPlugin(QDir curPath, QJsonObject object);
+    PluginConfigManager*  pluginConfigManager();
 private:
     static QJsonObject readJsonFile(QString filePath);
     LightSystemPrivate *d = nullptr;
+    PluginConfigManager* m_configManager;
 };
 } // namespace we
 

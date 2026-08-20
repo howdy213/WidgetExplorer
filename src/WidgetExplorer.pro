@@ -14,13 +14,17 @@ include( ../deps/Qlementine.pri)
 INCLUDEPATH +=\
     ../deps
 SOURCES += \
+    pluginconfigmanager.cpp \
     lightsystem.cpp \
     lightwidget.cpp \
     main.cpp \
+    pluginconfigwidget.cpp \
     querymaindialog.cpp
 HEADERS += \
+    pluginconfigmanager.h \
     lightsystem.h \
     lightwidget.h \
+    pluginconfigwidget.h \
     querymaindialog.h
 FORMS += \
     querymaindialog.ui
