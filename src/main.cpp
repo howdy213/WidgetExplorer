@@ -28,6 +28,7 @@
 
 #include <QApplication>
 #include <QDialog>
+#include <QDir>
 #include <QLabel>
 #include <QLockFile>
 #include <QMenu>
@@ -42,6 +43,7 @@ using namespace we;
 
 // 函数声明
 QStringList processParams(int argc, char *argv[], bool &pluginManagerMode);
+WMetaDocument *initConfigManager(WEBase *base);
 bool handleQtEnvironment(WMetaDocument *config);
 int handlePluginConfigManager(PluginConfigManager *configManager);
 int initMainPlugin(LightWidget *base, QStringList params,
@@ -77,9 +79,7 @@ int main(int argc, char *argv[]) {
         return 0;
 
     // 加载全局配置文件
-    lw->getWEClass()->configManager()->load(
-        WPath().getModuleFolder() + Config::ConfigPath, true);
-    auto config = lw->getWEClass()->configManager();
+    auto config = initConfigManager(lw);
 
     // 根据配置设置 Qt 环境变量（必须在 QApplication 创建前完成）
     handleQtEnvironment(config);
@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
 
     // 正常启动模式
     if (!initMainPlugin(lw, params, config))
-        return 1;  // 无可用的主插件，退出
+        return 1; // 无可用的主插件，退出
 
     return a.exec();
 }
@@ -119,6 +119,22 @@ QStringList processParams(int argc, char *argv[], bool &pluginManagerMode) {
         params.append(arg);
     }
     return params;
+}
+
+/**
+ * @brief 初始化全局配置文档
+ * @param base WEBase 实例指针
+ * @return 返回初始化后的配置文档指针
+ *
+ */
+WMetaDocument *initConfigManager(WEBase *base) {
+    QString path = WPath().getModuleFolder() + Config::ConfigPath;
+    QDir().mkpath(QFileInfo(path).absolutePath());
+    QFile file(path);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
+        file.close();
+    base->getWEClass()->configManager()->load(path, true);
+    return base->getWEClass()->configManager();
 }
 
 /**
@@ -205,8 +221,7 @@ int initMainPlugin(LightWidget *base, QStringList params,
         QMessageBox::StandardButton ret = QMessageBox::question(
             nullptr, QStringLiteral("提示"),
             QStringLiteral("无可用主界面，是否打开插件配置管理器？"),
-            QMessageBox::Yes | QMessageBox::No,
-            QMessageBox::Yes);
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         if (ret == QMessageBox::Yes) {
             return handlePluginConfigManager(base->pluginConfigManager());
         } else {
