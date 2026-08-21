@@ -41,7 +41,7 @@ PluginConfigManager::~PluginConfigManager() {
 void PluginConfigManager::clearTree() {
     std::function<void(PluginTreeNode *)> deleteChildren =
         [&](PluginTreeNode *node) {
-        for (PluginTreeNode *child : node->children) {
+        for (PluginTreeNode *child : std::as_const(node->children)) {
                 deleteChildren(child);
             delete child;
         }
@@ -98,11 +98,13 @@ void PluginConfigManager::buildNodeRecursive(const QString &key,
     childObj = readJsonFromFile(node->absolutePath, &ok);
     if (ok && childObj.value(Plugins::Plugins).isObject()) {
         node->isContainer = true;
-        const QJsonObject childPlugins = childObj.value(Plugins::Plugins).toObject();
+        const QJsonObject childPlugins =
+            childObj.value(Plugins::Plugins).toObject();
         const QString childBaseDir = QFileInfo(node->absolutePath).absolutePath();
         for (const QString &childKey : childPlugins.keys()) {
             const QJsonObject childVal = childPlugins.value(childKey).toObject();
-            const QString childPath = childVal.value(Plugins::PluginConfigPath).toString();
+            const QString childPath =
+                childVal.value(Plugins::PluginConfigPath).toString();
             buildNodeRecursive(childKey, childPath, node, childBaseDir);
         }
     } else {
@@ -250,11 +252,11 @@ void PluginConfigManager::traverse(
     const std::function<void(PluginTreeNode *)> &func) const {
     std::function<void(PluginTreeNode *)> dfs = [&](PluginTreeNode *node) {
         func(node);
-        for (PluginTreeNode *child : node->children) {
+        for (PluginTreeNode *child : std::as_const(node->children)) {
             dfs(child);
         }
     };
-    for (PluginTreeNode *child : rootNode_->children) {
+    for (PluginTreeNode *child : std::as_const(rootNode_->children)) {
         dfs(child);
     }
 }

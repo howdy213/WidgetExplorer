@@ -130,7 +130,7 @@ bool LightWidget::initMainPlugin(QStringList params, QUuid defualtWidget) {
             if (dlg.exec() != QDialog::Accepted)
                 return false;
             auto plugin = dlg.selectedPlugin();
-            id = plugin->getLocalUuid();
+            id = plugin->localUuid();
         }
     }
     if (ret.length() == 1)

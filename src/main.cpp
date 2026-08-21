@@ -93,7 +93,7 @@ int main(int argc, char *argv[]) {
 
     // 正常启动模式
     if (!initMainPlugin(lw, params, config))
-        return -1;  // 无可用的主插件，退出
+        return 1;  // 无可用的主插件，退出
 
     return a.exec();
 }
@@ -202,8 +202,16 @@ int initMainPlugin(LightWidget *base, QStringList params,
                                 .toString());
 
     if (!base->initMainPlugin(params, defaultMain)) {
-        QMessageBox::information(nullptr, "提示", "无可用主界面，将退出");
-        return 0;
+        QMessageBox::StandardButton ret = QMessageBox::question(
+            nullptr, QStringLiteral("提示"),
+            QStringLiteral("无可用主界面，是否打开插件配置管理器？"),
+            QMessageBox::Yes | QMessageBox::No,
+            QMessageBox::Yes);
+        if (ret == QMessageBox::Yes) {
+            return handlePluginConfigManager(base->pluginConfigManager());
+        } else {
+            return 0;
+        }
     }
     return 1;
 }

@@ -70,7 +70,7 @@ void QueryMainDialog::addMainWidget(WPlugin* plugin) {
         return;
 
     // 使用插件的 Path 元数据作为显示文本
-    QString displayName = plugin->getMetaData(Plugin::Path).toString();
+    QString displayName = plugin->path();
     QRadioButton *radioBtn = new QRadioButton(displayName, this);
     m_contentLayout->addWidget(radioBtn);
     m_btnGroup->addButton(radioBtn, m_btnId);
@@ -104,7 +104,7 @@ void QueryMainDialog::onOkClicked() {
         auto configManager = WE::inst()->getWEClass()->configManager();
         if (configManager) {
             configManager->set(Config::DefaultMain,
-                               plugin->getLocalUuid().toString());
+                               plugin->localUuid().toString());
             configManager->save(WPath().getModuleFolder() + Config::ConfigPath);
         }
     }

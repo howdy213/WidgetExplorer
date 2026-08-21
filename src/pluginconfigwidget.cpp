@@ -100,8 +100,37 @@ void PluginConfigWidget::setRootJsonPath(const QString &path) {
     if (manager_.loadFromFile(path)) {
         rebuildTreeFromManager();
     } else {
-        QMessageBox::warning(this, QStringLiteral("错误"),
-                             QStringLiteral("无法加载根配置文件：%1").arg(path));
+        QMessageBox::StandardButton ret = QMessageBox::question(
+            this,
+            QStringLiteral("配置文件错误"),
+            QStringLiteral("无法加载根配置文件：%1\n是否重建一个新的空配置文件？").arg(path),
+            QMessageBox::Yes | QMessageBox::No,
+            QMessageBox::Yes);
+
+        if (ret == QMessageBox::Yes) {
+            // 重建根配置文件
+            QFileInfo fileInfo(path);
+            QDir().mkpath(fileInfo.absolutePath());
+
+            QFile file(path);
+            if (file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+                QJsonObject rootObj;
+                rootObj["Plugins"] = QJsonObject();
+                file.write(QJsonDocument(rootObj).toJson(QJsonDocument::Indented));
+                file.close();
+
+                // 重新加载
+                if (manager_.loadFromFile(path)) {
+                    rebuildTreeFromManager();
+                } else {
+                    QMessageBox::warning(this, QStringLiteral("错误"),
+                                         QStringLiteral("重建后仍无法加载根配置文件，请检查文件权限或内容。"));
+                }
+            } else {
+                QMessageBox::warning(this, QStringLiteral("错误"),
+                                     QStringLiteral("无法创建根配置文件：%1").arg(path));
+            }
+        }
     }
 }
 
