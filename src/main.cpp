@@ -19,14 +19,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "PluginConfigWidget.h"
 #include "lightwidget.h"
 
-#include "WECore/file/wpath.h"
-#include "WECore/metadata/WMetaDocument.h"
+#include "WECore/plugin/wpluginconfigwidget.h"
+#include "WECore/utils/wpath.h"
+#include "WECore/metadata/wmetadocument.h"
+#include "WECore/style/wstyle.h"
 #include "WECore/we/we.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QDialog>
 #include <QDir>
 #include <QLabel>
@@ -35,8 +37,10 @@
 #include <QMessageBox>
 #include <QStyleFactory>
 #include <QSystemTrayIcon>
+#include <QTranslator>
 #include <QVBoxLayout>
-#include <WECore/file/wshellexecute.h>
+#include <QVariant>
+#include <WECore/utils/wshellexecute.h>
 
 using namespace we::Consts;
 using namespace we;
@@ -45,7 +49,9 @@ using namespace we;
 QStringList processParams(int argc, char *argv[], bool &pluginManagerMode);
 WMetaDocument *initConfigManager(WEBase *base);
 bool handleQtEnvironment(WMetaDocument *config);
-int handlePluginConfigManager(PluginConfigManager *configManager);
+bool installTranslation(WMetaDocument *config);
+bool applyStyle(WMetaDocument *config);
+int handlePluginConfigManager(WPluginConfigManager *configManager);
 int initMainPlugin(LightWidget *base, QStringList params,
                    WMetaDocument *config);
 
@@ -86,6 +92,12 @@ int main(int argc, char *argv[]) {
 
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":/icons/icon/we.png"));
+
+    // 安装界面翻译（必须在 QApplication 创建之后、加载插件之前）
+    installTranslation(config);
+
+    // 应用界面样式（同样必须在 QApplication 创建之后）
+    applyStyle(config);
 
     // 插件配置管理模式
     if (pluginManagerMode)
@@ -156,6 +168,56 @@ bool handleQtEnvironment(WMetaDocument *config) {
 }
 
 /**
+ * @brief 按配置中的 Language 项安装界面翻译
+ * @param config 全局配置对象
+ * @return 始终返回 true
+ *
+ * 必须在 QApplication 创建之后调用。取值为 zh_CN / en_US，缺省 zh_CN；
+ * en_US 即源代码语言，无需翻译文件。翻译文件由 WECore 构建时以
+ * `:/i18n/WECore_<locale>.qm` 形式嵌入资源。
+ */
+bool installTranslation(WMetaDocument *config) {
+    static QTranslator translator;
+    QString language = config->hasArg(Config::Language)
+                           ? config->get(Config::Language).toString()
+                           : QString();
+    if (language.isEmpty())
+        language = "zh_CN";
+    if (language == "en_US")
+        return true; // 源语言为英文，直接用原文
+    if (!translator.load(":/i18n/WECore_" + language))
+        qWarning() << "加载翻译文件失败:" << language;
+    else
+        QCoreApplication::installTranslator(&translator);
+    return true;
+}
+
+/**
+ * @brief 按配置中的 Style 段应用界面样式
+ * @param config 全局配置对象
+ * @return 是否成功应用；样式名未知时回退到默认样式
+ *
+ * 必须在 QApplication 创建之后调用。样式选择保存在配置的 `Style` 段
+ * （StyleName / Theme / StyleFile / ThemeFile）；该段在设置对话框中由 WStyle
+ * 的子配置挂载提供，这里只负责启动时读取整体再交给 WStyle 应用。
+ * 此处读到的 Style 段是一个嵌套对象，因此按整体取 map 后交给 WStyle 解析键名。
+ */
+bool applyStyle(WMetaDocument *config) {
+    if (!config)
+        return false;
+    const QVariantMap values = config->get(Config::Style).toMap();
+    const QString name =
+        values
+            .value(QString::fromLatin1(style::KeyStyleName),
+                   QString::fromLatin1(style::StyleDefault))
+            .toString();
+    style::WStyle *style = style::WStyle::create(name);
+    if (!style) // 配置中的样式名不可用（例如来源机器上装了对应样式插件）
+        style = style::WStyle::create(QString::fromLatin1(style::StyleDefault));
+    return style ? style->applyFromValues(values) : false;
+}
+
+/**
  * @brief 处理插件配置管理器模式
  * @param configManager 插件配置管理器实例指针
  * @return 程序退出码
@@ -163,14 +225,14 @@ bool handleQtEnvironment(WMetaDocument *config) {
  * 该模式用于单独编辑插件配置文件，不会加载任何插件。
  * 显示编辑器对话框，编辑完成退出当前进程。
  */
-int handlePluginConfigManager(PluginConfigManager *configManager) {
+int handlePluginConfigManager(WPluginConfigManager *configManager) {
     QDialog dlg;
     dlg.setWindowTitle("插件配置管理器");
     dlg.resize(800, 600);
 
     // 创建配置编辑控件并设置根配置文件路径
-    PluginConfigWidget *configWidget =
-        new PluginConfigWidget(configManager, &dlg);
+    WPluginConfigWidget *configWidget =
+        new WPluginConfigWidget(configManager, &dlg);
     QString rootConfigPath = WPath().getModuleFolder() + Plugins::ConfigPath;
     configWidget->setRootJsonPath(rootConfigPath);
 

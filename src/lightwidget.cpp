@@ -21,11 +21,11 @@
  */
 #include "lightwidget.h"
 #include "WECore/service/wserviceregistry.h"
-#include "lightsystem.h"
+#include "WECore/plugin/wpluginscanner.h"
 #include "querymaindialog.h"
 
-#include "WECore/file/wpath.h"
-#include "WECore/metadata/WMetaDocument.h"
+#include "WECore/utils/wpath.h"
+#include "WECore/metadata/wmetadocument.h"
 #include "WECore/plugin/wplugin.h"
 #include "WECore/we/we.h"
 #include "WECore/widget/wwidgetmanager.h"
@@ -41,7 +41,7 @@ using namespace we;
  */
 class LightWidgetPrivate {
 public:
-    LightSystem *sys = nullptr;
+    WPluginScanner *sys = nullptr;
 };
 
 /**
@@ -88,7 +88,7 @@ void LightWidget::initData(QSharedPointer<WEBaseData> data) {
  */
 LightWidget::LightWidget() : WEBase() {
     d = new LightWidgetPrivate;
-    d->sys = new LightSystem;
+    d->sys = new WPluginScanner;
 }
 
 /**
@@ -102,7 +102,7 @@ bool LightWidget::init() {
     return true;
 }
 
-PluginConfigManager *LightWidget::pluginConfigManager() {
+WPluginConfigManager *LightWidget::pluginConfigManager() {
     return d->sys ? d->sys->pluginConfigManager() : nullptr;
 }
 

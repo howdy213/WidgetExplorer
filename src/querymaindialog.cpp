@@ -22,8 +22,8 @@
 #include "querymaindialog.h"
 #include "WECore/plugin/wplugin.h"
 #include "WECore/we/we.h"
-#include "WECore/file/wpath.h"
-#include <WECore/metadata/WMetaDocument.h>
+#include "WECore/utils/wpath.h"
+#include <WECore/metadata/wmetadocument.h>
 #include <WECore/we/webase.h>
 
 using namespace we;

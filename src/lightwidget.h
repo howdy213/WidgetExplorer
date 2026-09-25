@@ -29,8 +29,11 @@
 #include <QString>
 
 class LightWidgetPrivate;
-class PluginConfigManager;
+
 namespace we {
+
+class WPluginConfigManager;
+
 /**
  * @class LightWidget
  * @brief Main class for the lightweight widget system.
@@ -39,7 +42,7 @@ class LightWidget : public WEBase {
 public:
     LightWidget();
     bool init();
-    PluginConfigManager* pluginConfigManager();
+    WPluginConfigManager *pluginConfigManager();
     bool initMainPlugin(QStringList params, QUuid defualtWidget);
     void initAllPlugin();
     bool initPlugin(

@@ -10,21 +10,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 INCLUDEPATH +=../deps/WECore/include
 include( ../deps/WECore/WECore.pri)
-include( ../deps/Qlementine.pri)
 INCLUDEPATH +=\
     ../deps
 SOURCES += \
-    pluginconfigmanager.cpp \
-    lightsystem.cpp \
     lightwidget.cpp \
     main.cpp \
-    pluginconfigwidget.cpp \
     querymaindialog.cpp
 HEADERS += \
-    pluginconfigmanager.h \
-    lightsystem.h \
     lightwidget.h \
-    pluginconfigwidget.h \
     querymaindialog.h
 FORMS += \
     querymaindialog.ui
