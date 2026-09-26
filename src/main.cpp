@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @brief 程序入口文件，实现了程序的初始化与主流程控制
+ * @brief Program entry point: application initialization and main flow control.
  * @author howdy213
  * @date 2026-08-20
  * @version 2.0.0
@@ -45,7 +45,7 @@
 using namespace we::Consts;
 using namespace we;
 
-// 函数声明
+// Forward declarations
 QStringList processParams(int argc, char *argv[], bool &pluginManagerMode);
 WMetaDocument *initConfigManager(WEBase *base);
 bool handleQtEnvironment(WMetaDocument *config);
@@ -56,20 +56,21 @@ int initMainPlugin(LightWidget *base, QStringList params,
                    WMetaDocument *config);
 
 /**
- * @brief 应用程序主入口函数
- * @param argc 命令行参数数量
- * @param argv 命令行参数数组
- * @return 程序退出码，0 表示正常退出，非 0 表示异常或用户主动退出
+ * @brief Application entry point.
+ * @param argc Number of command line arguments.
+ * @param argv Command line arguments.
+ * @return Exit code: 0 for a normal exit, non-zero on error or when the user
+ *         quit early.
  *
- * 负责完成以下工作：
- * 1. 检查单例锁，防止重复运行
- * 2. 解析命令行参数，判断是否为插件配置管理模式
- * 3. 初始化核心系统（WE 框架、LightWidget）
- * 4. 加载全局配置并设置 Qt 环境变量
- * 5. 根据运行模式执行相应流程
+ * Performs the following work:
+ * 1. Takes the single instance lock so the program cannot run twice.
+ * 2. Parses the command line to detect the plugin configuration manager mode.
+ * 3. Initializes the core system (the WE framework and LightWidget).
+ * 4. Loads the global configuration and sets the Qt environment variables.
+ * 5. Runs the flow that matches the selected mode.
  */
 int main(int argc, char *argv[]) {
-    // 单例锁：避免程序重复启动
+    // Single instance lock: keeps the program from being started twice.
     QLockFile lockfile(WPath().getModuleFolder() + "we.lock");
     if (!lockfile.tryLock(0))
         return 1;
@@ -77,48 +78,53 @@ int main(int argc, char *argv[]) {
     bool pluginManagerMode = false;
     QStringList params = processParams(argc, argv, pluginManagerMode);
 
-    // 创建 LightWidget 实例并初始化核心系统
+    // Create the LightWidget instance and initialize the core system.
     auto lw = new LightWidget;
     if (!WE::init(lw))
         return 0;
     if (!lw->init())
         return 0;
 
-    // 加载全局配置文件
+    // Load the global configuration file.
     auto config = initConfigManager(lw);
 
-    // 根据配置设置 Qt 环境变量（必须在 QApplication 创建前完成）
+    // Set the Qt environment variables from the configuration; this has to be
+    // done before QApplication is created.
     handleQtEnvironment(config);
 
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":/icons/icon/we.png"));
 
-    // 安装界面翻译（必须在 QApplication 创建之后、加载插件之前）
+    // Install the UI translation; this has to be done after QApplication is
+    // created and before any plugin is loaded.
     installTranslation(config);
 
-    // 应用界面样式（同样必须在 QApplication 创建之后）
+    // Apply the UI style, which likewise has to be done after QApplication is
+    // created.
     applyStyle(config);
 
-    // 插件配置管理模式
+    // Plugin configuration manager mode.
     if (pluginManagerMode)
         return handlePluginConfigManager(lw->pluginConfigManager());
 
-    // 正常启动模式
+    // Normal startup.
     if (!initMainPlugin(lw, params, config))
-        return 1; // 无可用的主插件，退出
+        return 1; // No main plugin is available, so there is nothing to run.
 
     return a.exec();
 }
 
 /**
- * @brief 解析命令行参数，提取运行模式与剩余参数
- * @param argc 参数个数
- * @param argv 参数数组
- * @param pluginManagerMode 输出参数，指示是否启用插件配置管理模式
- * @return 去除模式标志后剩余的参数列表（通常是主插件需要的参数）
+ * @brief Parses the command line into the run mode and the remaining arguments.
+ * @param argc Number of arguments.
+ * @param argv Argument array.
+ * @param pluginManagerMode Output: whether the plugin configuration manager mode
+ *        was requested.
+ * @return The arguments left after the mode flag was removed, normally the ones
+ *         the main plugin needs.
  *
- * 支持识别 `-pluginmanager` 或 `--pluginmanager` 参数。
- * 其余参数将被收集并返回，供后续主插件使用。
+ * Recognizes `-pluginmanager` and `--pluginmanager`. Every other argument is
+ * collected and returned for the main plugin to use.
  */
 QStringList processParams(int argc, char *argv[], bool &pluginManagerMode) {
     QStringList params;
@@ -134,10 +140,12 @@ QStringList processParams(int argc, char *argv[], bool &pluginManagerMode) {
 }
 
 /**
- * @brief 初始化全局配置文档
- * @param base WEBase 实例指针
- * @return 返回初始化后的配置文档指针
+ * @brief Initializes the global configuration document.
+ * @param base The WEBase instance.
+ * @return The initialized configuration document.
  *
+ * Creates the configuration file when it does not exist yet, so the document can
+ * always be loaded from disk.
  */
 WMetaDocument *initConfigManager(WEBase *base) {
     QString path = WPath().getModuleFolder() + Config::ConfigPath;
@@ -150,10 +158,12 @@ WMetaDocument *initConfigManager(WEBase *base) {
 }
 
 /**
- * @brief 根据配置设置 Qt 环境变量（如字体 DPI、缩放因子）
- * @param config 配置对象
- * @return 始终返回 true
+ * @brief Sets the Qt environment variables from the configuration.
+ * @param config The global configuration.
+ * @return Always true.
  *
+ * Covers the font DPI and the scale factor. Has to run before QApplication is
+ * created, because Qt reads these variables during startup.
  */
 bool handleQtEnvironment(WMetaDocument *config) {
     if (/*qEnvironmentVariableIsEmpty("QT_FONT_DPI")*/ true) {
@@ -168,13 +178,14 @@ bool handleQtEnvironment(WMetaDocument *config) {
 }
 
 /**
- * @brief 按配置中的 Language 项安装界面翻译
- * @param config 全局配置对象
- * @return 始终返回 true
+ * @brief Installs the UI translation selected by the Language entry.
+ * @param config The global configuration.
+ * @return Always true.
  *
- * 必须在 QApplication 创建之后调用。取值为 zh_CN / en_US，缺省 zh_CN；
- * en_US 即源代码语言，无需翻译文件。翻译文件由 WECore 构建时以
- * `:/i18n/WECore_<locale>.qm` 形式嵌入资源。
+ * Has to be called after QApplication is created. The value is zh_CN or en_US and
+ * defaults to zh_CN; en_US is the language the sources are written in, so it
+ * needs no translation file. The translation files are embedded as
+ * `:/i18n/WECore_<locale>.qm` when WECore is built.
  */
 bool installTranslation(WMetaDocument *config) {
     static QTranslator translator;
@@ -184,23 +195,28 @@ bool installTranslation(WMetaDocument *config) {
     if (language.isEmpty())
         language = "zh_CN";
     if (language == "en_US")
-        return true; // 源语言为英文，直接用原文
+        return true; // English is the source language, so the source is used.
     if (!translator.load(":/i18n/WECore_" + language))
-        qWarning() << "加载翻译文件失败:" << language;
+        qWarning() << "Failed to load the translation file:" << language;
     else
         QCoreApplication::installTranslator(&translator);
     return true;
 }
 
 /**
- * @brief 按配置中的 Style 段应用界面样式
- * @param config 全局配置对象
- * @return 是否成功应用；样式名未知时回退到默认样式
+ * @brief Applies the UI style described by the Style section.
+ * @param config The global configuration.
+ * @return Whether the style was applied; an unknown style name falls back to the
+ *         default style.
  *
- * 必须在 QApplication 创建之后调用。样式选择保存在配置的 `Style` 段
- * （StyleName / Theme / StyleFile / ThemeFile）；该段在设置对话框中由 WStyle
- * 的子配置挂载提供，这里只负责启动时读取整体再交给 WStyle 应用。
- * 此处读到的 Style 段是一个嵌套对象，因此按整体取 map 后交给 WStyle 解析键名。
+ * Has to be called after QApplication is created. The selection is stored in the
+ * `Style` section of the configuration (StyleName / Theme / ColorTheme /
+ * AccentColor / StyleFile / ThemeFile); a settings dialog edits that section
+ * through the sub-config WStyle contributes, while this function only reads the
+ * whole section at startup and hands it to WStyle.
+ *
+ * The section is read as a whole map so that WStyle can resolve the entry names
+ * itself.
  */
 bool applyStyle(WMetaDocument *config) {
     if (!config)
@@ -212,25 +228,27 @@ bool applyStyle(WMetaDocument *config) {
                    QString::fromLatin1(style::StyleDefault))
             .toString();
     style::WStyle *style = style::WStyle::create(name);
-    if (!style) // 配置中的样式名不可用（例如来源机器上装了对应样式插件）
+    // The configured style is unavailable, for instance because the style plugin
+    // it comes from is not installed on this machine.
+    if (!style)
         style = style::WStyle::create(QString::fromLatin1(style::StyleDefault));
     return style ? style->applyFromValues(values) : false;
 }
 
 /**
- * @brief 处理插件配置管理器模式
- * @param configManager 插件配置管理器实例指针
- * @return 程序退出码
+ * @brief Handles the plugin configuration manager mode.
+ * @param configManager The plugin configuration manager.
+ * @return The process exit code.
  *
- * 该模式用于单独编辑插件配置文件，不会加载任何插件。
- * 显示编辑器对话框，编辑完成退出当前进程。
+ * This mode edits the plugin configuration files on their own and loads no plugin
+ * at all. The editor dialog is shown and the process exits once editing is done.
  */
 int handlePluginConfigManager(WPluginConfigManager *configManager) {
     QDialog dlg;
-    dlg.setWindowTitle("插件配置管理器");
+    dlg.setWindowTitle("Plugin Configuration Manager");
     dlg.resize(800, 600);
 
-    // 创建配置编辑控件并设置根配置文件路径
+    // Create the configuration editor and point it at the root configuration.
     WPluginConfigWidget *configWidget =
         new WPluginConfigWidget(configManager, &dlg);
     QString rootConfigPath = WPath().getModuleFolder() + Plugins::ConfigPath;
@@ -239,15 +257,15 @@ int handlePluginConfigManager(WPluginConfigManager *configManager) {
     QVBoxLayout *layout = new QVBoxLayout(&dlg);
     layout->addWidget(configWidget);
 
-    QLabel *tipLabel = new QLabel("安全模式：当前未加载任何插件。", &dlg);
+    QLabel *tipLabel = new QLabel("Safe mode: no plugin is loaded.", &dlg);
     layout->addWidget(tipLabel);
 
     dlg.exec();
 
-    // 编辑完成后询问是否重启主程序
+    // Ask whether the application should be restarted once editing is done.
     QMessageBox::StandardButton ret = QMessageBox::question(
-        nullptr, QStringLiteral("插件配置管理器"),
-        QStringLiteral("配置编辑完成，是否重新启动主程序？"),
+        nullptr, QStringLiteral("Plugin Configuration Manager"),
+        QStringLiteral("Configuration editing finished. Restart the application?"),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
     if (ret != QMessageBox::Yes) {
@@ -260,15 +278,16 @@ int handlePluginConfigManager(WPluginConfigManager *configManager) {
 }
 
 /**
- * @brief 初始化并启动主插件
- * @param base LightWidget 实例指针
- * @param params 从命令行解析出的参数列表，将传递给主插件
- * @param config 全局配置对象
- * @return 成功返回 1，失败返回 0
+ * @brief Initializes and starts the main plugin.
+ * @param base The LightWidget instance.
+ * @param params The arguments parsed from the command line, passed on to the main
+ *        plugin.
+ * @param config The global configuration.
+ * @return 1 on success, 0 on failure.
  *
- * 从配置中读取默认主插件的 LocalUuid（若无则为空），
- * 调用 LightWidget::initMainPlugin 尝试加载并初始化主插件。
- * 若初始化失败，弹出提示对话框并返回 0。
+ * Reads the LocalUuid of the default main plugin from the configuration (empty
+ * when unset) and calls LightWidget::initMainPlugin to load and initialize the
+ * main plugin. A message box is shown and 0 is returned when that fails.
  */
 int initMainPlugin(LightWidget *base, QStringList params,
                    WMetaDocument *config) {
@@ -281,8 +300,9 @@ int initMainPlugin(LightWidget *base, QStringList params,
 
     if (!base->initMainPlugin(params, defaultMain)) {
         QMessageBox::StandardButton ret = QMessageBox::question(
-            nullptr, QStringLiteral("提示"),
-            QStringLiteral("无可用主界面，是否打开插件配置管理器？"),
+            nullptr, QStringLiteral("Notice"),
+            QStringLiteral("No main widget is available. Open the plugin "
+                           "configuration manager?"),
             QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         if (ret == QMessageBox::Yes) {
             return handlePluginConfigManager(base->pluginConfigManager());

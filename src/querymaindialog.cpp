@@ -31,7 +31,7 @@ using namespace we::Consts;
 
 QueryMainDialog::QueryMainDialog(QWidget *parent)
     : QDialog(parent), m_btnGroup(new QButtonGroup(this)), m_btnId(0) {
-    setWindowTitle("选择MainWidget");
+    setWindowTitle("Select Main Widget");
     setMinimumSize(300, 220);
     setModal(true);
 
@@ -39,26 +39,26 @@ QueryMainDialog::QueryMainDialog(QWidget *parent)
     mainLayout->setSpacing(15);
     mainLayout->setContentsMargins(20, 20, 20, 20);
 
-    QLabel *tipLabel = new QLabel("请选择优先启动的MainWidget：", this);
+    QLabel *tipLabel = new QLabel("Select the main widget to start first:", this);
     mainLayout->addWidget(tipLabel);
 
     m_contentLayout = new QVBoxLayout();
     mainLayout->addLayout(m_contentLayout);
 
-    // 添加复选框
-    m_defaultCheckBox = new QCheckBox("设为默认启动项", this);
+    // One radio button is added per main widget by addMainWidget().
+    m_defaultCheckBox = new QCheckBox("Set as the default startup entry", this);
     mainLayout->addWidget(m_defaultCheckBox);
 
     QHBoxLayout *btnLayout = new QHBoxLayout();
-    QPushButton *okBtn = new QPushButton("确定", this);
-    QPushButton *cancelBtn = new QPushButton("取消", this);
+    QPushButton *okBtn = new QPushButton("OK", this);
+    QPushButton *cancelBtn = new QPushButton("Cancel", this);
     btnLayout->addStretch();
     btnLayout->addWidget(okBtn);
     btnLayout->addSpacing(10);
     btnLayout->addWidget(cancelBtn);
     mainLayout->addLayout(btnLayout);
 
-    // 修改确定按钮的连接
+    // The OK button stores the selection instead of only accepting the dialog.
     connect(okBtn, &QPushButton::clicked, this, &QueryMainDialog::onOkClicked);
     connect(cancelBtn, &QPushButton::clicked, this, &QDialog::reject);
 
@@ -69,7 +69,7 @@ void QueryMainDialog::addMainWidget(WPlugin* plugin) {
     if (!plugin)
         return;
 
-    // 使用插件的 Path 元数据作为显示文本
+    // The plugin's Path metadata is used as the display text.
     QString displayName = plugin->path();
     QRadioButton *radioBtn = new QRadioButton(displayName, this);
     m_contentLayout->addWidget(radioBtn);
